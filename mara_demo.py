@@ -2,7 +2,7 @@ from NeticaPy import Netica
 from enum import Enum, EnumMeta, _EnumDict
 import json
 import pandas as pd
-
+import sys
 
 #custom enum metaclass so that calling MyEnum.MY_VALUE returns b'MY_VALUE'
 #str method should return just the name of the enum value
@@ -74,8 +74,28 @@ res = N.InitNetica2_bn(env, mesg)
 
 
 
-#network file
-path = b"hess/O'Brien et al Mara Netica BN.neta"
+#network file is passed in as the first argument
+try:
+    path = sys.argv[1]
+except IndexError:
+    print("Please pass in the path to the network file as the first argument")
+    print("Example: python mara_demo.py mara.neta")
+    sys.exit(1)
+
+#ensure that the network file exists
+try:
+    with open(path, 'r'):
+        pass
+except FileNotFoundError:
+    print(f"The network file at {path} does not exist")
+    sys.exit(1)
+
+
+#convert path to a byte array
+path = path.encode('utf-8')
+
+#debug hardcoded path
+# path = b"hess/O'Brien et al Mara Netica BN.neta"
 
 #load the network
 net = N.ReadNet_bn(N.NewFileStream_ns(path, env, b""), 0)
