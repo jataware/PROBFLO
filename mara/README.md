@@ -1,3 +1,26 @@
+# Mara River in the Kenya and Tanzania case study
+Python wrapper for running Mara River supplemental netica model (available [here](https://doi.org/10.5194/hess-22-957-2018-supplement)). Note that the Senqu river model currently will not run without a full netica license, due to containing more nodes than allowed by the free version. Mara River case study outlined in [this paper](https://hess.copernicus.org/articles/22/957/2018/hess-22-957-2018.pdf)
+
+### Paper Abstract
+Environmental flow (E-flow) frameworks advocate holistic, regional-scale, probabilistic E-flow assessments that consider flow and non-flow drivers of change in a socioecological context as best practice. Regional-scale ecological risk assessments of multiple stressors to social and ecological endpoints, which address ecosystem dynamism, have been undertaken internationally at different spatial scales using the relative-risk model since the mid-1990s. With the recent incorporation of Bayesian belief networks into the relative-risk model, a robust regional-scale ecological risk assessment approach is available that can contribute to achieving the best practice recommendations of E-flow frameworks. PROBFLO is a holistic E-flow assessment method that incorporates the relative-risk model and Bayesian belief networks (BN-RRM) into a transparent probabilistic modelling tool that addresses uncertainty explicitly. PROBFLO has been developed to evaluate the socio-ecological consequences of historical, current and future water resource use scenarios and generate E-flow requirements on regional spatial scales. The approach has been implemented in two regional-scale case studies in Africa where its flexibility and functionality has been demonstrated. In both case studies the evidence-based outcomes facilitated informed environmental management
+
+
+## Requirements
+- NeticaPy3: https://github.com/jataware/NeticaPy3
+- pandas
+
+## Usage
+0. Download a copy of the Mara case study netica model from the supplimental material, and copy to [PROBFLO/mara/hess/O'Brien et al Mara Netica BN.neta]()
+1. Set input variable beliefs with [input.json](input.json)
+    - Variables may be set to either `'Zero'`, `'Low'`, `'Med'`, `'High'`, or `null`
+    - `null` leaves the variable in its default state, representing a distribution over the probability of `'Zero'`, `'Low'`, `'Med'`, and `'High'`
+    - setting `'Zero'`, `'Low'`, `'Med'`, or `'High'` clamps the distribution to 100% for that field, and zero for all others
+2. Run the program
+    ```
+    $ python mara_demo.py
+    ```
+3. Results are stored in Mara.csv
+
 ## Model Input Variable Explanations
 Endpoint; BN model variable (BN Title) | Description | Rank
 --- | --- | ---
