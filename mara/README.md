@@ -13,7 +13,7 @@ Environmental flow (E-flow) frameworks advocate holistic, regional-scale, probab
 0. Download a copy of the Mara case study netica model from the supplimental material, and copy to [PROBFLO/mara/hess/O'Brien et al Mara Netica BN.neta]()
 1. Set input variable beliefs with [input.json](input.json)
     - Variables may be set to either `'Zero'`, `'Low'`, `'Med'`, `'High'`, or `null`
-    - `null` leaves the variable in its default state, representing a distribution over the probability of `'Zero'`, `'Low'`, `'Med'`, and `'High'`
+    - `null` leaves the variable in its default state, representing a distribution over the probability of `'Zero'`, `'Low'`, `'Med'`, and `'High'`. For example, setting all variables to `null` runs the default configuration of the model without any interventions.
     - setting `'Zero'`, `'Low'`, `'Med'`, or `'High'` clamps the distribution to 100% for that field, and zero for all others
 2. Run the program
     ```

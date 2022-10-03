@@ -3,37 +3,6 @@ from enum import Enum, EnumMeta, _EnumDict
 import json
 import pandas as pd
 
-import pdb
-
-
-"""
-installation process
-
-#python prereqs:
-- cython
-- pandas
-- maybe others?
-
-$ git clone git@github.com:Koenkk/NeticaPy3.git
-$ cd NeticaPy3
-$ ./compile_linux.sh
-
-#no setup.py so make a simple one
-$ echo "from distutils.core import setup
-setup(name='NeticaPy', version='1.0', packages=[''], package_dir={'': '.'}, package_data={'': ['NeticaPy.so', 'NeticaEx.o']})
-" > setup.py
-$ pip install -e .
-
-
-#to set values, modify input.json. Each field may be any of ['Zero', 'Low', 'Med', 'High', null]
-#setting to null keeps that node as its default distribution
-#other fields clamp that value to 100%
-
-$ python3 netica_test.py
-
-"""
-
-
 
 #custom enum metaclass so that calling MyEnum.MY_VALUE returns b'MY_VALUE'
 #str method should return just the name of the enum value
