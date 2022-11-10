@@ -19,7 +19,23 @@ Environmental flow (E-flow) frameworks advocate holistic, regional-scale, probab
     ```
     $ python mara_demo.py path/to/Mara.neta
     ```
-3. Results are stored in Mara.csv
+3. Results are stored in `results/Mara.csv`
+
+## Docker Usage
+
+First build the container with:
+
+```
+docker build -t probflo .
+```
+
+Then run:
+
+```
+docker run --rm -v $PWD:/project probflo python mara.py neta/mara.neta
+```
+
+Results will be written to a `results` directory.
 
 ## Model Input Variable Explanations
 Endpoint; BN model variable (BN Title) | Description | Rank

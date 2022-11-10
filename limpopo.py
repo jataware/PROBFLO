@@ -28,48 +28,20 @@ class Val(MyEnum):
     High = ()
 
 class In(MyEnum):
-    TOXICITY_BHN = ()
-    SED_BHN = ()
-    PATHOGENS_BHN = ()
-    DILUTION_MITIGATION = ()
-    TREATMENT_DRINKING = ()
-    QUANTITY = ()
-    DEMAND_BHN = ()
-    TREATMENT_WASTEWATER = ()
-    AQUATIC_BIO_CUES = ()
-    INUNDATION = ()
-    RIVER_GEOMORPH = ()
-    TOX_ECO = ()
-    INVASIVE_SPECIES = ()
-    SED_ECO = ()
-    IMPORTANCE_ECO = ()
-    DILUTION_SALTS_CP = ()
-    SALTS_CP = ()
-    CROP_DEMAND = ()
-    QUALITY_LIVESTOCK = ()
-    ANIMALS_TRAMPLING = ()
-    DEMAND_LIVESTOCK = ()
-    VEG_BANK = ()
-    VEG_COVER_WETLAND = ()
-    SED_WETLAND = ()
-    PLANT_COMMUNITY = ()
-    IMPORTANCE_WETLAND = ()
-    SAFETY_TOURISTS = ()
-    DEMAND_ECOTOURISM = ()
+    SUB_FISH_SFLO = ()
+    SUB_FISH_SSUP = ()
+    SUB_VEG_SFLO = ()
+    DOM_WAT_RFLO = ()
 
 class Out(MyEnum):
-    BASIC_HUMAN_NEEDS = ()
-    ECOLOGICAL_INTEGRITY = ()
-    ECOTOURISM_INDUSTRY = ()
-    IRRIGATED_CROP_PRODUCTION = ()
-    LIVESTOCK_HERDING_CAPACITY = ()
-    WETLAND_CONSERVATION = ()
-
+    LIV_VEG_END = ()
+    SUB_FISH_END = ()
+    SUB_VEG_END = ()
 
 #netica setup
 N=Netica()
 mesg=bytearray()
-env=N.NewNeticaEnviron_ns(b"",None,b"")
+env=N.NewNeticaEnviron_ns(b"+ObrienG/NorthwestU/120-6-A/15312",None,b"")
 res = N.InitNetica2_bn(env, mesg)
 
 
@@ -95,7 +67,7 @@ except FileNotFoundError:
 path = path.encode('utf-8')
 
 #debug hardcoded path
-# path = b"hess/O'Brien et al Mara Netica BN.neta"
+# path = b"neta/O'Brien et al Mara Netica BN.neta"
 
 #load the network
 net = N.ReadNet_bn(N.NewFileStream_ns(path, env, b""), 0)
@@ -116,7 +88,7 @@ N.CompileNet_bn(net)
 
 
 # read input from json
-with open('input.json') as f:
+with open('configs/limpopo.json') as f:
     input = json.load(f)
 
 # set input values
@@ -137,8 +109,8 @@ for key, value in input.items():
 columns = ['Country', 'Catchment', 'Year', 'Level', *Out.__members__.keys()]
 
 #constant fields for all values
-country = 'Kenya'
-catchment = 'Mara'
+country = 'South Africa'
+catchment = 'Limpopo'
 year = 2022
 
 
@@ -158,7 +130,7 @@ df = pd.DataFrame(rows, columns=columns)
 
 #save to csv
 print(f'saving to {catchment}.csv')
-df.to_csv(f'{catchment}.csv', index=False)
+df.to_csv(f'results/{catchment}.csv', index=False)
 
 
 
