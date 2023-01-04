@@ -1,6 +1,14 @@
 {   
-    "SUB_FISH_SFLO": "High",
-    "SUB_VEG_SFLO": "Zero",
-    "SUB_FISH_SSUP": "Low",
-    "DOM_WAT_RFLO": "Med"
+    "DISCHARGE_YR": null,
+    "DISCHARGE_LF": "Zero",
+    "DISCHARGE_HF": "Low",
+    "DISCHARGE_FD": "Med",
+    "WQ_ECOSYSTEM": "High",
+    "NO_BARRIERS": null,
+    "DOM_WAT_GRO": "Zero",
+    "WQ_TREATMENT": "Low",
+    "LANDUSE_SSUP": "Med",
+    "WAT_DIS_HUM": "High",
+    "WQ_PEOPLE": null,
+    "WQ_LIVESTOCK": "Zero"
 }

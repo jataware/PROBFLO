@@ -3,3 +3,5 @@ hess
 
 .env
 .env.leave
+
+__pycache__

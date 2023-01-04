@@ -1,5 +1,4 @@
 from NeticaPy import Netica
-from enum import Enum, EnumMeta, _EnumDict
 import json
 import pandas as pd
 import sys
@@ -13,15 +12,33 @@ class Val(MyEnum):
     High = ()
 
 class In(MyEnum):
-    SUB_FISH_SFLO = ()
-    SUB_FISH_SSUP = ()
-    SUB_VEG_SFLO = ()
-    DOM_WAT_RFLO = ()
+    DISCHARGE_YR = ()
+    DISCHARGE_LF = ()
+    DISCHARGE_HF = ()
+    DISCHARGE_FD = ()
+    WQ_ECOSYSTEM = ()
+    NO_BARRIERS = ()
+    DOM_WAT_GRO = ()
+    WQ_TREATMENT = ()
+    LANDUSE_SSUP = ()
+    WAT_DIS_HUM = ()
+    WQ_PEOPLE = ()
+    WQ_LIVESTOCK = ()
 
 class Out(MyEnum):
-    LIV_VEG_END = ()
-    SUB_FISH_END = ()
     SUB_VEG_END = ()
+    SUB_FISH_END = ()
+    LIV_VEG_END = ()
+    DOM_WAT_END = ()
+    FLO_ATT_END = ()
+    RIV_ASS_END = ()
+    WAT_DIS_END = ()
+    RES_RES_END = ()
+    FISH_ECO_END = ()
+    VEG_ECO_END = ()
+    INV_ECO_END = ()
+    REC_SPIR_END = ()
+    TOURISM_END = ()
 
 #netica setup
 N=Netica()
@@ -51,25 +68,9 @@ except FileNotFoundError:
 #convert path to a byte array
 path = path.encode('utf-8')
 
-#debug hardcoded path
-# path = b"neta/O'Brien et al Mara Netica BN.neta"
-
 #load the network
 net = N.ReadNet_bn(N.NewFileStream_ns(path, env, b""), 0)
 N.CompileNet_bn(net)
-
-
-#manual example
-# print(In.TOXICITY_BHN, Val.Zero, N.GetNodeBelief(In.TOXICITY_BHN, Val.Zero, net))
-# print(Out.BASIC_HUMAN_NEEDS, Val.Low, N.GetNodeBelief(Out.BASIC_HUMAN_NEEDS, Val.Low, net))
-
-# print(f'updating', In.TOXICITY_BHN, Val.Zero, 'to 1')
-# N.EnterFinding(In.TOXICITY_BHN, Val.Zero, net)
-# print(In.TOXICITY_BHN, Val.Zero, N.GetNodeBelief(In.TOXICITY_BHN, Val.Zero, net))
-# print(Out.BASIC_HUMAN_NEEDS, Val.Low, N.GetNodeBelief(Out.BASIC_HUMAN_NEEDS, Val.Low, net))
-
-
-
 
 
 # read input from json
@@ -80,12 +81,15 @@ with open('configs/limpopo.json') as f:
 for key, value in input.items():
     if value is not None:
         #verify that key is from In enum, and value is from Val enum
-        if key in In.__members__ and value in Val.__members__:
-            print(f"setting {key} to {value}")
-            N.EnterFinding(key.encode('utf-8'), value.encode('utf-8'), net)
-        else:
-            print("invalid input: ", key, value)
+        if key not in In.__members__:
+            print(f"skipping invalid input: {key}:{value}. Key must be one of {In.__members__.keys()}")
+            continue
+        if value not in Val.__members__:
+            print(f"skipping invalid input: {value}:{value}. Value must be one of {Val.__members__.keys()}")
+            continue
 
+        print(f"setting {key} to {value}")
+        N.EnterFinding(key.encode('utf-8'), value.encode('utf-8'), net)
 
 
 
