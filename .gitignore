@@ -1,2 +1,5 @@
 hess
 *.csv
+
+.env
+.env.leave
