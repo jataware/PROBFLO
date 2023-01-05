@@ -2,6 +2,7 @@ from NeticaPy import Netica
 import json
 import pandas as pd
 import sys
+import os
 from utilities import MyEnum
 
 
@@ -43,7 +44,8 @@ class Out(MyEnum):
 #netica setup
 N=Netica()
 mesg=bytearray()
-env=N.NewNeticaEnviron_ns(b"+ObrienG/NorthwestU/120-6-A/15312",None,b"")
+password = os.environ.get('NETICA_PASSWORD', default="").encode('utf-8')
+env=N.NewNeticaEnviron_ns(password,None,b"")
 res = N.InitNetica2_bn(env, mesg)
 
 
