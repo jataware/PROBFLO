@@ -4,6 +4,7 @@ import pandas as pd
 import sys
 import os
 from utilities import MyEnum
+import numpy as np
 
 
 class Val(MyEnum):
@@ -75,6 +76,15 @@ net = N.ReadNet_bn(N.NewFileStream_ns(path, env, b""), 0)
 N.CompileNet_bn(net)
 
 
+#functions for getting the mean and standard deviation of the output nodes
+def get_stats(out, net):
+    beliefs = np.array([N.GetNodeBelief(out, level, net) for level in Val])
+    centers = np.arange(4)*25 + 12.5
+    mean = np.sum(beliefs*centers)
+    std = np.sqrt(np.sum(beliefs*(centers-mean)**2))
+    return mean, std
+
+
 # read input from json
 with open('configs/limpopo.json') as f:
     input = json.load(f)
@@ -97,7 +107,7 @@ for key, value in input.items():
 
 
 #crate a dataframe with [Catchment,Year,Level,*Out] as the columns, and Val as the rows
-columns = ['Country', 'Catchment', 'Year', 'Level', *Out.__members__.keys()]
+columns = ['Country', 'Catchment', 'Year', 'Node', 'Mean', 'STD', *Val.__members__.keys()]#, *Out.__members__.keys()]
 
 #constant fields for all values
 country = 'South Africa'
@@ -105,18 +115,25 @@ catchment = 'Limpopo'
 year = 2022
 
 
-#loop through all possible values of Level
+# #loop through all possible values of Level
 rows = []
-for level in Val:
-    row = [country, catchment, year, level]
-    for out in Out:
-        #get the belief for the output
-        belief = N.GetNodeBelief(out, level, net)
-        #add the belief to the row
-        row.append(belief)
-
-    rows.append(row)
+for out in Out:
+    row = [country, catchment, year, out]
     
+    #get the mean and standard deviation of the output
+    mean, std = get_stats(out, net)
+    row.append(mean)
+    row.append(std)
+    
+    #get the belief for the output for each level: zero, low, med, high
+    for level in Val.__members__.values():
+        belief = N.GetNodeBelief(out, level, net)
+        row.append(belief)   
+
+    #add the row to the dataframe
+    rows.append(row)
+
+
 df = pd.DataFrame(rows, columns=columns)
 
 #save to csv
