@@ -62,9 +62,10 @@ res = N.InitNetica2_bn(env, mesg)
 try:
     path = sys.argv[1]
 except IndexError:
-    print("Please pass in the path to the network file as the first argument")
-    print("Example: python mara_demo.py mara.neta")
-    sys.exit(1)
+    # print("Please pass in the path to the network file as the first argument")
+    # print("Example: python mara_demo.py mara.neta")
+    # sys.exit(1)
+    path = "neta/mara.neta" #default to hardcoded path
 
 #ensure that the network file exists
 try:
