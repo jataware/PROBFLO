@@ -81,7 +81,13 @@ def get_stats(out, net):
     beliefs = np.array([N.GetNodeBelief(out, level, net) for level in Val])
     centers = np.arange(4)*25 + 12.5
     mean = np.sum(beliefs*centers)
-    std = np.sqrt(np.sum(beliefs*(centers-mean)**2))
+
+    #hacky standard deviation approximation. Deriving the standard deviation analytically was too difficult
+    samples = 10000
+    x = np.linspace(0,100,samples)
+    y = np.repeat(beliefs, samples//4)
+    std = np.sqrt(np.sum(y*(x-mean)**2)/samples)*2
+
     return mean, std
 
 
