@@ -113,8 +113,14 @@ for key, value in input.items():
 
 
 
-#crate a dataframe with [Catchment,Year,Level,*Out] as the columns, and Val as the rows
-columns = ['Country', 'Catchment', 'Year', 'Value', *Out.__members__.keys()]
+#crate a dataframe with [Catchment,Year,Level,*[*Out x (*Val + ['mean', 'std'])]] as the columns, and Val as the rows
+columns = ['Country', 'Catchment', 'Year']
+for out in Out:
+    for val in Val:
+        columns.append(f'{out}-{val}')
+    columns.append(f'{out}-mean')
+    columns.append(f'{out}-std')
+
 
 #constant fields for all values
 country = 'South Africa'
@@ -122,27 +128,17 @@ catchment = 'Limpopo'
 year = 2022
 
 
-#loop through all possible values of Level
-rows = []
-for level in Val:
-    row = [country, catchment, year, level]
-    for out in Out:
+#output results as a single row for each combination of Out x Val and Out x ['mean', 'std']
+row = [country, catchment, year]
+for out in Out:
+    for level in Val:
         belief = N.GetNodeBelief(out, level, net)
         row.append(belief)
-    rows.append(row)
-
-#add rows for mean and standard deviation
-mean_row = [country, catchment, year, 'Mean']
-std_row = [country, catchment, year, 'STD']
-for out in Out:
     mean, std = get_stats(out, net)
-    mean_row.append(mean)
-    std_row.append(std)
-rows.append(mean_row)
-rows.append(std_row)
+    row.append(mean)
+    row.append(std)
 
-
-df = pd.DataFrame(rows, columns=columns)
+df = pd.DataFrame([row], columns=columns)
 
 #save to csv
 print(f'saving to {catchment}.csv')
