@@ -143,10 +143,10 @@ for key, value in input.items():
 columns = ['Country', 'Catchment', 'Year']
 for out in Out:
     for val in Val:
-        columns.append(f'{out}-{val}').replace("b'","").replace("'","")
-    columns.append(f'{out}-mean').replace("b'","").replace("'","")
-    columns.append(f'{out}-std').replace("b'","").replace("'","")
-
+        columns.append(f'{out}-{val}')
+    columns.append(f'{out}-mean')
+    columns.append(f'{out}-std')
+columns_cleaned = [c.replace("b'","").replace("'","") for c in columns]
 
 #constant fields for all values
 country = 'South Africa'
@@ -164,7 +164,7 @@ for out in Out:
     row.append(mean)
     row.append(std)
 
-results = pd.DataFrame([row], columns=columns)
+results = pd.DataFrame([row], columns=columns_cleaned)
 shape = pd.read_csv('shapes/limpopo_0.1degree.csv')
 shape = shape[['latitude','longitude','RR']].copy()
 shape['Country'] = 'South Africa'
