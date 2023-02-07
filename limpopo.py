@@ -6,6 +6,32 @@ import os
 from utilities import MyEnum
 import numpy as np
 
+column_mapper = {'SUB_FISH_END-mean': 'Maintaining fisheries for livelihoods (Mean)',
+ 'SUB_VEG_END-mean': 'Maintain plants for livelihoods (Mean)',
+ 'LIV_VEG_END-mean': 'Maintain plants for domestic livestock (Mean)',
+ 'DOM_WAT_END-mean': 'Maintain water for domestic use (Mean)',
+ 'FLO_ATT_END-mean': 'Flood attenuation services (Mean)',
+ 'RIV_ASS_END-mean': 'River assimilation capacity (Mean)',
+ 'WAT_DIS_END-mean': 'Maintain water borne diseases (Mean)',
+ 'RES_RES_END-mean': 'Resource resilience (Mean)',
+ 'FISH_ECO_END-mean': 'Maintain fish communities (Mean)',
+ 'VEG_ECO_END-mean': 'Maintain vegetation communities (Mean)',
+ 'INV_ECO_END-mean': 'Maintain invertebrate communities (Mean)',
+ 'REC_SPIR_END-mean': 'Maintain recreation and spiritual act (Mean)',
+ 'TOURISM_END-mean': 'Maintain tourism (Mean)',
+ 'SUB_FISH_END-std': 'Maintaining fisheries for livelihoods (Standard Deviation)',
+ 'SUB_VEG_END-std': 'Maintain plants for livelihoods (Standard Deviation)',
+ 'LIV_VEG_END-std': 'Maintain plants for domestic livestock (Standard Deviation)',
+ 'DOM_WAT_END-std': 'Maintain water for domestic use (Standard Deviation)',
+ 'FLO_ATT_END-std': 'Flood attenuation services (Standard Deviation)',
+ 'RIV_ASS_END-std': 'River assimilation capacity (Standard Deviation)',
+ 'WAT_DIS_END-std': 'Maintain water borne diseases (Standard Deviation)',
+ 'RES_RES_END-std': 'Resource resilience (Standard Deviation)',
+ 'FISH_ECO_END-std': 'Maintain fish communities (Standard Deviation)',
+ 'VEG_ECO_END-std': 'Maintain vegetation communities (Standard Deviation)',
+ 'INV_ECO_END-std': 'Maintain invertebrate communities (Standard Deviation)',
+ 'REC_SPIR_END-std': 'Maintain recreation and spiritual act (Standard Deviation)',
+ 'TOURISM_END-std': 'Maintain tourism (Standard Deviation)'}
 
 class Val(MyEnum):
     Zero = ()
@@ -143,6 +169,8 @@ shape = pd.read_csv('shapes/limpopo_0.1degree.csv')
 shape = shape[['latitude','longitude','RR']].copy()
 shape['Country'] = 'South Africa'
 df = pd.merge(shape, results, left_on = ['Country'], right_on = ['Country'])
+df = df[df.columns.drop(list(df.filter(regex='Zero|Low|Med|High')))]
+df.rename(columns=column_mapper, inplace=True)
 
 #save to csv
 print(f'saving to {catchment}.csv')
