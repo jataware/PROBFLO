@@ -143,9 +143,9 @@ for key, value in input.items():
 columns = ['Country', 'Catchment', 'Year']
 for out in Out:
     for val in Val:
-        columns.append(f'{out}-{val}')
-    columns.append(f'{out}-mean')
-    columns.append(f'{out}-std')
+        columns.append(f'{out}-{val}').replace("b'","").replace("'","")
+    columns.append(f'{out}-mean').replace("b'","").replace("'","")
+    columns.append(f'{out}-std').replace("b'","").replace("'","")
 
 
 #constant fields for all values
