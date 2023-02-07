@@ -138,14 +138,15 @@ for out in Out:
     row.append(mean)
     row.append(std)
 
-df = pd.DataFrame([row], columns=columns)
+results = pd.DataFrame([row], columns=columns)
+shape = pd.read_csv('shapes/limpopo_0.1degree.csv')
+shape = shape[['latitude','longitude','RR']].copy()
+shape['Country'] = 'South Africa'
+df = pd.merge(shape, results, left_on = ['Country'], right_on = ['Country'])
 
 #save to csv
 print(f'saving to {catchment}.csv')
 df.to_csv(f'results/{catchment}.csv', index=False)
-
-
-
 
 #cleanup
 N.DeleteNet_bn(net)
