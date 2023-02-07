@@ -15,6 +15,9 @@ $ python limpopo.py neta/limpopo.neta
 
 Results are output to [results/Limpopo.csv](../results/Limpopo.csv) as a CSV file.
 
+## Gridded to Shape
+The Limpopo case study results are merged with the shape found in `shapes` which has been converted to a `csv` at the 1 and 0.1 degree cells. Currently this model uses the 0.1 degree (approx 10km at equator) cell size.
+
 ## Docker Usage
 TBD
 
