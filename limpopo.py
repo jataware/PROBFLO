@@ -1,8 +1,6 @@
 from netica import NeticaManager, NeticaGraph, NeticaNode
 import json
 import pandas as pd
-import sys
-import os
 import numpy as np
 
 column_mapper = {'SUB_FISH_END-mean': 'Maintaining fisheries for livelihoods (Mean)',
