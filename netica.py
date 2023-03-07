@@ -38,6 +38,7 @@ class NeticaManager:
         return NeticaGraph(net, self)
     
     def cleanup_env(self):
+        """cleanup the netica environment when the manager is destroyed"""
         res = N.CloseNetica_bn(self.env, self.mesg)
         print(self.mesg.decode("utf-8"))
 
@@ -66,10 +67,7 @@ class NeticaGraph:
         return N.NthNode_bn(N.GetNetNodes_bn(self.net), node_idx)
     
     def get_node_by_name(self, node_name:str) -> NeticaNode:
-        #TODO: this is a pretty inefficient implementation...is there a netica API call for getting a node by name?
-        # all_node_names = [self.node_name(i) for i in range(self.num_nodes())]
-        # node_idx = all_node_names.index(node_name)
-        # return self.get_node_by_index(node_idx)
+        """get a node by its name. (make sure that the self.node_names dict is populated before calling this)"""
         node_idx = self.node_names[node_name]
         return self.get_node_by_index(node_idx)
     
@@ -142,4 +140,5 @@ class NeticaGraph:
         return belief
     
     def cleanup_net(self):
+        """run when the object is garbage collected"""
         N.DeleteNet_bn(self.net)
