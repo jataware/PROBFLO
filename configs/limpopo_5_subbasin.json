@@ -1,0 +1,72 @@
+{
+    "crocodile_marico": {   
+        "DISCHARGE_YR": null,
+        "DISCHARGE_LF": "Zero",
+        "DISCHARGE_HF": "Low",
+        "DISCHARGE_FD": "Med",
+        "WQ_ECOSYSTEM": "High",
+        "NO_BARRIERS":  null,
+        "DOM_WAT_GRO":  "Zero",
+        "WQ_TREATMENT": "Low",
+        "LANDUSE_SSUP": "Med",
+        "WAT_DIS_HUM":  "High",
+        "WQ_PEOPLE":    null,
+        "WQ_LIVESTOCK": "Zero"
+    },
+    "elephantes": {   
+        "DISCHARGE_YR": "Low",
+        "DISCHARGE_LF": "Med",
+        "DISCHARGE_HF": "High",
+        "DISCHARGE_FD": null,
+        "WQ_ECOSYSTEM": "Zero",
+        "NO_BARRIERS":  "Low",
+        "DOM_WAT_GRO":  "Med",
+        "WQ_TREATMENT": "High",
+        "LANDUSE_SSUP": null,
+        "WAT_DIS_HUM":  "Zero",
+        "WQ_PEOPLE":    "Low",
+        "WQ_LIVESTOCK": "Med"
+    },
+    "lower_limpopo": {   
+        "DISCHARGE_YR": "High",
+        "DISCHARGE_LF": null,
+        "DISCHARGE_HF": "Zero",
+        "DISCHARGE_FD": "Low",
+        "WQ_ECOSYSTEM": "Med",
+        "NO_BARRIERS":  "High",
+        "DOM_WAT_GRO":  null,
+        "WQ_TREATMENT": "Zero",
+        "LANDUSE_SSUP": "Low",
+        "WAT_DIS_HUM":  "Med",
+        "WQ_PEOPLE":    "High",
+        "WQ_LIVESTOCK": null
+    },
+    "middle_limpopo": {   
+        "DISCHARGE_YR": "Zero",
+        "DISCHARGE_LF": "Low",
+        "DISCHARGE_HF": "Med",
+        "DISCHARGE_FD": "High",
+        "WQ_ECOSYSTEM": null,
+        "NO_BARRIERS":  "Zero",
+        "DOM_WAT_GRO":  "Low",
+        "WQ_TREATMENT": "Med",
+        "LANDUSE_SSUP": "High",
+        "WAT_DIS_HUM":  null,
+        "WQ_PEOPLE":    "Zero",
+        "WQ_LIVESTOCK": "Low"
+    },
+    "upper_limpopo": {   
+        "DISCHARGE_YR": "Med",
+        "DISCHARGE_LF": "High",
+        "DISCHARGE_HF": null,
+        "DISCHARGE_FD": "Zero",
+        "WQ_ECOSYSTEM": "Low",
+        "NO_BARRIERS":  "Med",
+        "DOM_WAT_GRO":  "High",
+        "WQ_TREATMENT": null,
+        "LANDUSE_SSUP": "Zero",
+        "WAT_DIS_HUM":  "Low",
+        "WQ_PEOPLE":    "Med",
+        "WQ_LIVESTOCK": "High"
+    }
+}
