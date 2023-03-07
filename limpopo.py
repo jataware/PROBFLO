@@ -78,7 +78,6 @@ def main():
             print(f"skipping {key} because it has been marked as skip")
             continue
         if value is not None:
-            #verify that key is from In enum, and value is from Val enum
             if key not in input_nodes:
                 raise ValueError(f"invalid input: {key}:{value}. Key must be one of {input_nodes}")
             if value not in levels:
