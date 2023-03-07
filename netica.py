@@ -1,6 +1,7 @@
 
 from NeticaPy import Netica, NewNode as NeticaNode
 from typing import Generator
+from weakref import finalize
 import os
 
 import pdb
@@ -18,7 +19,16 @@ class NeticaManager:
         self.mesg = bytearray()
         self.res = N.InitNetica2_bn(self.env, self.mesg)
 
+        self.finilizer = finalize(self, self.cleanup_env)
+
     def new_graph(self, path:str) -> "NeticaGraph":
+        #ensure that the path exists
+        try:
+            with open(path, 'r'):
+                pass
+        except FileNotFoundError:
+            raise FileNotFoundError(f"The network file at {path} does not exist")
+
         path = path.encode('utf-8')
 
         #load the network
@@ -26,6 +36,10 @@ class NeticaManager:
         N.CompileNet_bn(net)
 
         return NeticaGraph(net, self)
+    
+    def cleanup_env(self):
+        res = N.CloseNetica_bn(self.env, self.mesg)
+        print(self.mesg.decode("utf-8"))
 
 class NeticaGraph:
     def __init__(self, net, manager:NeticaManager):
@@ -33,6 +47,8 @@ class NeticaGraph:
         self.manager = manager
 
         self.node_names = {self.node_name(i): i for i in range(self.num_nodes())}
+
+        self.finallizer = finalize(self, self.cleanup_net)
 
     def num_nodes(self) -> int:
         """get the number of nodes in a network"""
@@ -124,3 +140,6 @@ class NeticaGraph:
         node_state = self.get_node_state(node, state)
         belief = N.GetNodeBelief(node_name.encode('utf-8'), node_state.encode('utf-8'), self.net)
         return belief
+    
+    def cleanup_net(self):
+        N.DeleteNet_bn(self.net)
