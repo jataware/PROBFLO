@@ -3,6 +3,10 @@ import json
 import pandas as pd
 import numpy as np
 
+from os.path import join
+
+import pdb
+
 column_name_map = {
     'SUB_FISH_END': 'Maintaining fisheries for livelihoods',
     'SUB_VEG_END':  'Maintain plants for livelihoods',
@@ -41,15 +45,24 @@ output_nodes = ['SUB_VEG_END', 'SUB_FISH_END', 'LIV_VEG_END', 'DOM_WAT_END', 'FL
 skip_nodes = {'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_YR', 'DISCHARGE_FD'}
 
 
-#TODO
-{
-    'Limpopo Croc': 'crocodile_marico sub-catchment',
-    'LIMP-A71L-MAPUN': 'upper limpopo',
-    'LIMP-Y30D-PAFUR': 'middle limpopo',
-    'LIMP-Y30F-CHOKW': 'lower limpopo',
-    'ELEP-Y30C-SINGU': 'elephantes'
-}
+subbasins = ['Upper Limpopo', 'Crocodile Marico', 'Elephantes', 'Middle Limpopo', 'Lower Limpopo']
+def to_snake_case(name:str):
+    return name.lower().replace(' ', '_')
 
+# {
+#     'Limpopo Croc': 'crocodile_marico',
+#     'LIMP-A71L-MAPUN': 'upper_limpopo',
+#     'LIMP-Y30D-PAFUR': 'middle_limpopo',
+#     'LIMP-Y30F-CHOKW': 'lower_limpopo',
+#     'ELEP-Y30C-SINGU': 'elephantes'
+# }
+# files = [
+#     'neta/limpopo_5_subbasin/crocodile_marico.neta',
+#     'neta/limpopo_5_subbasin/elephantes.neta',
+#     'neta/limpopo_5_subbasin/lower_limpopo.neta',
+#     'neta/limpopo_5_subbasin/middle_limpopo.neta',
+#     'neta/limpopo_5_subbasin/upper_limpopo.neta',
+# ]
 
 #functions for getting the mean and standard deviation of the output nodes
 def get_stats(node:int|str|NeticaNode, net:NeticaGraph):
@@ -68,76 +81,83 @@ def get_stats(node:int|str|NeticaNode, net:NeticaGraph):
 
 
 def main():
-
-    files = [
-        'neta/limpopo_5_subbasin/crocodile_marico.neta',
-        'neta/limpopo_5_subbasin/elephantes.neta',
-        'neta/limpopo_5_subbasin/lower_limpopo.neta',
-        'neta/limpopo_5_subbasin/middle_limpopo.neta',
-        'neta/limpopo_5_subbasin/upper_limpopo.neta',
-    ]
-
     netica = NeticaManager()
-    
-    net = netica.new_graph("neta/limpopo.neta")
+    neta_dir = 'neta/limpopo_5_subbasin'
+    output_path = join('results', f'limpopo_5_subbasin.csv')
 
-    # read input from json
-    with open('configs/limpopo.json') as f:
-        input = json.load(f)
+    # get the model input settings from the config file
+    with open('configs/limpopo_5_subbasin.json') as f:
+        config = json.load(f)
 
-    # set input values from the config file
-    for key, value in input.items():
-        if key in skip_nodes:
-            print(f"skipping {key} because it has been marked as skip")
-            continue
-        if value is not None:
-            #verify that key is from In enum, and value is from Val enum
-            if key not in input_nodes:
-                raise ValueError(f"invalid input: {key}:{value}. Key must be one of {input_nodes}")
-            if value not in levels:
-                raise ValueError(f"invalid input: {key}:{value}. Value must be one of {levels}")
-
-            net.enter_finding(key, value, verbose=True)
-
-
-
-    #crate a dataframe with [Catchment,Year,Level,*[*output_nodes x (*levels + ['mean', 'std'])]] as the columns, and Val as the rows
-    columns = ['Country', 'Catchment', 'Year']
-    for out in output_nodes:
-        for level in levels:
-            columns.append(f'{out}-{level}')
-        columns.append(f'{out}-mean')
-        columns.append(f'{out}-std')
-    columns_cleaned = [c.replace("b'","").replace("'","") for c in columns]
+    # create a dataframe with [Year, Country, Catchment, Level,*[*output_nodes x ['mean', 'std']]] as the columns
+    # and one row for each subbasin
 
     #constant fields for all values
     country = 'South Africa'
     catchment = 'Limpopo'
     year = 2022
 
-
-    #output results as a single row for each combination of Out x Val and Out x ['mean', 'std']
-    row = [country, catchment, year]
+    columns = ['Year', 'Country', 'Catchment', 'RR']
     for out in output_nodes:
-        for level in levels:
-            # belief = N.GetNodeBelief(out, level, net)
-            belief = net.get_node_belief(out, level)
-            row.append(belief)
-        mean, std = get_stats(out, net)
-        row.append(mean)
-        row.append(std)
+        # for level in levels:
+        #     columns.append(f'{column_name_map[out]} ({level})')
+        columns.append(f'{column_name_map[out]} (Mean)')
+        columns.append(f'{column_name_map[out]} (Standard Deviation)')
+    
+    # rows to be filled in by running the model
+    rows = []
+    
+ 
+    # run the model for each subbasin
+    for subbasin in subbasins:
+        neta_path = join(neta_dir, f'{to_snake_case(subbasin)}.neta')
 
-    results = pd.DataFrame([row], columns=columns_cleaned)
+        # load the neta graph for this subbasin
+        net = netica.new_graph(neta_path)
+
+        # set input values from the config file for this subbasin
+        input = config[to_snake_case(subbasin)]
+        for key, value in input.items():
+            if key in skip_nodes:
+                print(f"skipping {key} because it has been marked as skip")
+                continue
+            if value is not None:
+                if key not in input_nodes:
+                    raise ValueError(f"invalid input: {key}:{value}. Key must be one of {input_nodes}")
+                if value not in levels:
+                    raise ValueError(f"invalid input: {key}:{value}. Value must be one of {levels}")
+
+                net.enter_finding(key, value, verbose=True)
+
+        #generate the dataframe row for this subbasin
+        row = [year, country, catchment, subbasin]
+        for out in output_nodes:
+            #do Zero, Low, Med, High
+            # for level in levels:
+            #     belief = net.get_node_belief(out, level)
+            #     row.append(belief)
+            #add mean and std
+            row.extend(get_stats(out, net))
+
+        rows.append(row)
+
+    results = pd.DataFrame(rows, columns=columns)
     shape = pd.read_csv('shapes/limpopo_0.1degree.csv')
-    shape = shape[['latitude','longitude','RR']].copy()
-    shape['Country'] = 'South Africa'
-    df = pd.merge(shape, results, left_on = ['Country'], right_on = ['Country'])
+    shape['Year'] = year
+    shape['Country'] = country
+    shape['Catchment'] = catchment
+    shape = shape[['Year','latitude','longitude', 'Country', 'Catchment','RR']].copy()
+
+    merge_on = ['RR', 'Country', 'Year', 'Catchment']
+
+    df = pd.merge(shape, results, left_on=merge_on, right_on=merge_on)
     df = df[df.columns.drop(list(df.filter(regex='Zero|Low|Med|High')))]
-    df.rename(columns=column_mapper, inplace=True)
+    # pdb.set_trace()
+    # df.rename(columns=column_mapper, inplace=True)
 
     #save to csv
-    print(f'saving to {catchment}.csv')
-    df.to_csv(f'results/{catchment}.csv', index=False)
+    print(f'saving to {output_path}')
+    df.to_csv(output_path, index=False)
 
 
 if __name__ == '__main__':
