@@ -90,16 +90,11 @@ class NeticaManager:
         self.finilizer = finalize(self, self.cleanup_env)
 
     def new_graph(self, path:str) -> "NeticaGraph":
-        #ensure that the path exists
-        # try:
-        with open(path, 'r'):
-            pass
-        # except FileNotFoundError:
-            # raise FileNotFoundError(f"The network file at {path} does not exist")
-
-        path = path.encode('utf-8')
+        #ensure that the file exists
+        with open(path, 'r'): ...
 
         #load the network
+        path = path.encode('utf-8')
         net = N.ReadNet_bn(N.NewFileStream_ns(path, self.env, b""), 0)
         N.CompileNet_bn(net)
 
