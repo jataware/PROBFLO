@@ -4,11 +4,11 @@ import pdb
 
 paths = [
     'neta/limpopo.neta',
-    'next_stuff/PROBFLO/5_subbasin/2021-11-16 BN Limpopo CROC_Update CPT_EcoEnd.neta',
-    'next_stuff/PROBFLO/5_subbasin/ELEP-Y30C-SINGU_Update CPT_EcoE.neta',
-    'next_stuff/PROBFLO/5_subbasin/LIMP-A71L-MAPUN_Update CPT_EcoE.neta',
-    'next_stuff/PROBFLO/5_subbasin/LIMP-Y30D-PAFUR FIXED_Update CPT_EcoE.neta',
-    'next_stuff/PROBFLO/5_subbasin/LIMP-Y30F-CHOKW_Update CPT_EcoE.neta'
+    'neta/limpopo_5_subbasin/crocodile_marico.neta',
+    'neta/limpopo_5_subbasin/elephantes.neta',
+    'neta/limpopo_5_subbasin/lower_limpopo.neta',
+    'neta/limpopo_5_subbasin/middle_limpopo.neta',
+    'neta/limpopo_5_subbasin/upper_limpopo.neta'
 ]
 
 def main():
@@ -18,6 +18,8 @@ def main():
         graph = netica.new_graph(path)
         for node in graph.net_itr():
             print(f'{graph.node_name(node)=}')
+            print(f'{graph.node_type(node)=}')
+            print(f'{graph.node_kind(node)=}')
             node_name = graph.node_name(node)
             node_by_name = graph.get_node_by_name(node_name)
             print(f'{node_by_name==node=}')
