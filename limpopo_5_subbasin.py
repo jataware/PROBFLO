@@ -22,17 +22,6 @@ column_name_map = {
     'REC_SPIR_END': 'Maintain recreation and spiritual act',
     'TOURISM_END':  'Maintain tourism',
 }
-column_measure_map = {
-    'mean': 'Mean',
-    'std': 'Standard Deviation'
-}
-def column_mapper(name:str):
-    """convert the raw column name to a human readable version"""
-    var, measure = name.split('-')
-    mapped_var = column_name_map[var]
-    mapped_measure = column_measure_map[measure]
-    return f"{mapped_var} ({mapped_measure})"
-
 
 levels = ['Zero', 'Low', 'Med', 'High']
 input_nodes = ['DISCHARGE_YR', 'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_FD', 'WQ_ECOSYSTEM', 'NO_BARRIERS', 'DOM_WAT_GRO', 'WQ_TREATMENT', 'LANDUSE_SSUP', 'WAT_DIS_HUM', 'WQ_PEOPLE', 'WQ_LIVESTOCK']
@@ -49,20 +38,6 @@ subbasins = ['Upper Limpopo', 'Crocodile Marico', 'Elephantes', 'Middle Limpopo'
 def to_snake_case(name:str):
     return name.lower().replace(' ', '_')
 
-# {
-#     'Limpopo Croc': 'crocodile_marico',
-#     'LIMP-A71L-MAPUN': 'upper_limpopo',
-#     'LIMP-Y30D-PAFUR': 'middle_limpopo',
-#     'LIMP-Y30F-CHOKW': 'lower_limpopo',
-#     'ELEP-Y30C-SINGU': 'elephantes'
-# }
-# files = [
-#     'neta/limpopo_5_subbasin/crocodile_marico.neta',
-#     'neta/limpopo_5_subbasin/elephantes.neta',
-#     'neta/limpopo_5_subbasin/lower_limpopo.neta',
-#     'neta/limpopo_5_subbasin/middle_limpopo.neta',
-#     'neta/limpopo_5_subbasin/upper_limpopo.neta',
-# ]
 
 #functions for getting the mean and standard deviation of the output nodes
 def get_stats(node:int|str|NeticaNode, net:NeticaGraph):
@@ -89,10 +64,8 @@ def main():
     with open('configs/limpopo_5_subbasin.json') as f:
         config = json.load(f)
 
-    # create a dataframe with [Year, Country, Catchment, Level,*[*output_nodes x ['mean', 'std']]] as the columns
-    # and one row for each subbasin
-
-    #constant fields for all values
+    # create a dataframe with [Year, Country, Catchment, Level,*[*output_nodes x ['mean', 'std']]] as the columns, and one row for each subbasin
+    # constant fields for all values
     country = 'South Africa'
     catchment = 'Limpopo'
     year = 2022
@@ -151,9 +124,6 @@ def main():
     merge_on = ['RR', 'Country', 'Year', 'Catchment']
 
     df = pd.merge(shape, results, left_on=merge_on, right_on=merge_on)
-    df = df[df.columns.drop(list(df.filter(regex='Zero|Low|Med|High')))]
-    # pdb.set_trace()
-    # df.rename(columns=column_mapper, inplace=True)
 
     #save to csv
     print(f'saving to {output_path}')
