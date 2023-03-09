@@ -8,6 +8,8 @@ from enum import Enum
 import pdb
 
 
+# See: https://norsys.com/onLineAPIManual/index.html for online C-API
+
 # _ns -> norsys
 # _bn -> bayesian network/decision network
 # _cs -> case/case-sets/databases
