@@ -1,6 +1,58 @@
-from netica import NeticaManager
+from netica import NeticaManager, N
 
 import pdb
+
+
+skip_nodes = ['DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_YR', 'DISCHARGE_FD']
+
+"""
+[Good]
+- GetNodeBeliefs_bn(node:NeticaNode)****
+---> 
+
+
+funcs to test:
+- EnterFinding_bn
+- EnterNodeValue_bn
+- EnterIntervalFinding_bn
+- GetNodeFinding_bn
+- GetNodeExpectedValue_bn
+
+
+plausible candidates:
+- CalcNodeState_bn
+- CalcNodeValue_bn
+- EnterFinding      -> used in netica.py
+- EnterFinding_bn
+- EnterNodeValue_bn
+- GetNodeAllProbs
+- GetNodeBelief
+- GetNodeBeliefs_bn
+- GetNodeFinding_bn
+- GetNodeProbs_bn
+- SetNodeFinding
+- SetNodeProbs
+- SetNodeProbs_bn
+- SetNodeValue
+
+
+
+"""
+
+#GetNodeBelief
+#GetNodeFinding_bn
+
+# netica = NeticaManager()
+# net = netica.new_graph("neta/limpopo.neta")
+
+
+# node = net.get_node('DISCHARGE_LF')
+
+# pdb.set_trace()
+
+
+# 1
+
 
 paths = [
     'neta/limpopo.neta',
@@ -17,13 +69,13 @@ def main():
     for path in paths:
         graph = netica.new_graph(path)
         for node in graph.net_itr():
-            print(f'{graph.node_name(node)=}')
-            print(f'{graph.node_type(node)=}')
-            print(f'{graph.node_kind(node)=}')
-            node_name = graph.node_name(node)
+            print(f'{graph.get_node_name(node)=}')
+            print(f'{graph.get_node_type(node)=}')
+            print(f'{graph.get_node_kind(node)=}')
+            node_name = graph.get_node_name(node)
             node_by_name = graph.get_node_by_name(node_name)
-            print(f'{node_by_name==node=}')
-            for state in range(graph.get_node_num_states(node)):
+            print(f'finding: {graph.get_node_finding(node)=}')
+            for state in range(graph.get_num_node_states(node)):
                 print(f'    {graph.get_node_state_name(node, state)} = {graph.get_node_belief(node, state)}')
             print()
         print('------------------------------------------------------------------')
@@ -55,7 +107,7 @@ def main():
     #     # print(f'type: {graph.node_type(node_idx)}')
     #     # print(f'kind: {graph.node_kind(node_idx)}')
 
-    #     # states = [graph.get_node_state_name(node_idx, i) for i in range(graph.get_node_num_states(node_idx))]
+    #     # states = [graph.get_node_state_name(node_idx, i) for i in range(graph.get_num_node_states(node_idx))]
     #     # print(f'states: {states}')
 
     #     # print()

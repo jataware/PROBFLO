@@ -23,15 +23,12 @@ column_name_map = {
     'TOURISM_END':  'Maintain tourism',
 }
 
-levels = ['Zero', 'Low', 'Med', 'High']
-input_nodes = ['DISCHARGE_YR', 'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_FD', 'WQ_ECOSYSTEM', 'NO_BARRIERS', 'DOM_WAT_GRO', 'WQ_TREATMENT', 'LANDUSE_SSUP', 'WAT_DIS_HUM', 'WQ_PEOPLE', 'WQ_LIVESTOCK']
+# levels = ['Zero', 'Low', 'Med', 'High']
+# input_nodes = ['DISCHARGE_YR', 'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_FD', 'WQ_ECOSYSTEM', 'NO_BARRIERS', 'DOM_WAT_GRO', 'WQ_TREATMENT', 'LANDUSE_SSUP', 'WAT_DIS_HUM', 'WQ_PEOPLE', 'WQ_LIVESTOCK']
 output_nodes = ['SUB_VEG_END', 'SUB_FISH_END', 'LIV_VEG_END', 'DOM_WAT_END', 'FLO_ATT_END', 'RIV_ASS_END', 'WAT_DIS_END', 'RES_RES_END', 'FISH_ECO_END', 'VEG_ECO_END', 'INV_ECO_END', 'REC_SPIR_END', 'TOURISM_END']
 
-
-#TODO: these nodes are not set with Zero, Low, Med, High values. Need to have some method for managing their values.
-# probably can extend the netica convenience API to check the type of each node + it's possible input values
-# these nodes take 29 binned input values for a distribution range from 0-584.7
-skip_nodes = {'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_YR', 'DISCHARGE_FD'}
+# these nodes need to be retracted before they can be assigned new values
+retract_nodes = {'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_YR', 'DISCHARGE_FD'}
 
 
 subbasins = ['Upper Limpopo', 'Crocodile Marico', 'Elephantes', 'Middle Limpopo', 'Lower Limpopo']
@@ -42,7 +39,8 @@ def to_snake_case(name:str):
 #functions for getting the mean and standard deviation of the output nodes
 def get_stats(node:int|str|NeticaNode, net:NeticaGraph):
     """Given a histogram of beliefs (Zero, Low, Medium, High), compute mean and std-dev"""
-    beliefs = np.array([net.get_node_belief(node, level) for level in levels]) #np.array([N.GetNodeBelief(out, level, net) for level in Val])
+    #TODO: replace levels with just getting the array of state values
+    beliefs = np.array([net.get_node_belief(node, i) for i in range(net.get_num_node_states(node))]) #np.array([N.GetNodeBelief(out, level, net) for level in Val])
     centers = np.arange(4)*25 + 12.5
     mean = np.sum(beliefs*centers)
 
@@ -91,16 +89,8 @@ def main():
         # set input values from the config file for this subbasin
         input = config[to_snake_case(subbasin)]
         for key, value in input.items():
-            if key in skip_nodes:
-                print(f"skipping {key} because it has been marked as skip")
-                continue
             if value is not None:
-                if key not in input_nodes:
-                    raise ValueError(f"invalid input: {key}:{value}. Key must be one of {input_nodes}")
-                if value not in levels:
-                    raise ValueError(f"invalid input: {key}:{value}. Value must be one of {levels}")
-
-                net.enter_finding(key, value, verbose=True)
+                net.enter_finding(key, value, retract=(key in retract_nodes), verbose=True)
 
         #generate the dataframe row for this subbasin
         row = [year, country, catchment, subbasin]

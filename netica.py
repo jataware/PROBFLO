@@ -110,11 +110,17 @@ class NeticaGraph:
         self.net = net
         self.manager = manager
 
-        self.node_names = {self.node_name(i): i for i in range(self.num_nodes())}
-
+        self.node_names = {self.get_node_name(i): i for i in range(self.get_num_nodes())}
+        self.node_state_names = {self.get_node_name(i): {self.get_node_state_name(i, j): j for j in range(self.get_num_node_states(i))} for i in range(self.get_num_nodes())}
+        
+        #replace node state names that only had empty strings, with None
+        for node_name, state_names in self.node_state_names.items():
+            if len(state_names) == 1 and list(state_names.keys())[0] == "":
+                self.node_state_names[node_name] = None
+        
         self.finallizer = finalize(self, self.cleanup_net)
 
-    def num_nodes(self) -> int:
+    def get_num_nodes(self) -> int:
         """get the number of nodes in a network"""
         return N.LengthNodeList_bn(N.GetNetNodes_bn(self.net))
 
@@ -131,7 +137,10 @@ class NeticaGraph:
     
     def get_node_by_name(self, node_name:str) -> NeticaNode:
         """get a node by its name. (make sure that the self.node_names dict is populated before calling this)"""
-        node_idx = self.node_names[node_name]
+        try:
+            node_idx = self.node_names[node_name]
+        except KeyError:
+            raise KeyError(f"node `{node_name}` does not exist in this network")
         return self.get_node_by_index(node_idx)
     
     def get_node(self, node:int|str|NeticaNode) -> NeticaNode:
@@ -144,64 +153,96 @@ class NeticaGraph:
             return node
         else:
             raise TypeError(f"node must be either a string, int, or NeticaNode, not {type(node)}")
-
-    def get_node_state(self, node:int|str|NeticaNode, state:int|str) -> str:
-        """get the name of a state of a node"""
-        node = self.get_node(node)
-        if isinstance(state, int):
-            return self.get_node_state_name(node, state)
-        elif isinstance(state, str):
-            all_node_states = [self.get_node_state_name(node, i) for i in range(self.get_node_num_states(node))]
-            assert state in all_node_states, f"state {state} not in node {self.node_name(node)}'s states: {all_node_states}"
-            return state
-        else:
-            raise TypeError(f"state must be either a string or int, not {type(state)}")
     
-    def node_name(self, node:int|str|NeticaNode) -> str:
+    def get_node_name(self, node:int|str|NeticaNode) -> str:
         #TODO: -> node comes from net_itr... maybe make this just take in the index of the node?
         """get the name of a node"""
         node = self.get_node(node)
         return N.GetNodeName_bn(node).decode('utf-8')
 
-    def node_type(self, node:int|str|NeticaNode) -> NodeType:
+    def get_node_type(self, node:int|str|NeticaNode) -> NodeType:
         """get the type of a node. node may be either the index, or the name of the node"""
         node = self.get_node(node)
         raw_type = N.GetNodeType_bn(node)
         return NodeType(raw_type)
 
-    def node_kind(self, node:int|str|NeticaNode) -> NodeKind:
+    def get_node_kind(self, node:int|str|NeticaNode) -> NodeKind:
         """get the kind of a node"""
         node = self.get_node(node)
         raw_kind = N.GetNodeKind_bn(node)
         return NodeKind(raw_kind)
 
-
-    def get_node_num_states(self, node:int|str|NeticaNode) -> int:
+    def get_num_node_states(self, node:int|str|NeticaNode) -> int:
         #TODO: -> node comes from net_itr... maybe make this just take in the index of the node?
         """get the number of states of a node cane take on, or 0 if it is a continuous node"""
         node = self.get_node(node)
         return N.GetNodeNumberStates_bn(node)
+    
+    def check_node_state_index_valid(self, node:int|str|NeticaNode, state_idx:int):
+        """checks that the state index is valid"""
+        node = self.get_node(node)
+        num_states = self.get_num_node_states(node)
+        if state_idx >= num_states:
+            raise ValueError(f"state_idx given ({state_idx}) must be less than the number of states ({num_states})")
+        if state_idx < 0:
+            raise ValueError(f"state_idx given ({state_idx}) must be greater than or equal to 0")
 
-    def get_node_state_name(self, node:int|str|NeticaNode, state_index) -> str:
+    def get_node_state_by_name(self, node:int|str|NeticaNode, state_name:str) -> int:
+        """get the index of a state of a node, given its name. Mainly just checks that the state name is valid"""
+        node = self.get_node(node)
+        state_map = self.node_state_names[self.get_node_name(node)]
+        if state_map is None:
+            raise ValueError(f"node {self.get_node_name(node)} has no named states. Instead provide the state index (0-{self.get_num_node_states(node)-1})")
+        if state_name not in state_map:
+            raise ValueError(f"invalid state_name '{state_name}'. Must be one of {list(state_map.keys())}")
+        return state_map[state_name]
+    
+    def get_node_state(self, node:int|str|NeticaNode, state:int|str) -> int:
+        """get the index of a state of a node, given its name or index"""
+        node = self.get_node(node)
+        if isinstance(state, int):
+            self.check_node_state_index_valid(node, state)
+            return state
+        elif isinstance(state, str):
+            return self.get_node_state_by_name(node, state)
+        else:
+            raise TypeError(f"state must be either a string or int, not {type(state)}")
+
+    def get_node_state_name(self, node:int|str|NeticaNode, state:int|str) -> str:
         #TODO: -> node comes from net_itr... maybe make this just take in the index of the node?
         """get the name of a state of a node"""
         node = self.get_node(node)
-        return N.GetNodeStateName_bn(node, state_index).decode('utf-8')
-    
-    def enter_finding(self, node:int|str|NeticaNode, state:int|str, verbose=False):
-        node = self.get_node(node)
-        node_name = self.node_name(node)
-        node_state = self.get_node_state(node, state)
-        N.EnterFinding(node_name.encode('utf-8'), node_state.encode('utf-8'), self.net)
-        if verbose:
-            print(f"setting {node_name} to {node_state}")
+        state_index = self.get_node_state(node, state)
+        return N.GetNodeStateName_bn(node, state_index).decode('utf-8')  
 
+    def enter_finding(self, node:int|str|NeticaNode, state:int|str, *, retract=False, verbose=False):
+        node = self.get_node(node)
+        node_name = self.get_node_name(node)
+
+        # retract finding. Certain nodes require this before entering a new finding
+        if retract:
+            N.RetractNodeFindings_bn(node)
+            if verbose:
+                print(f"retracting {node_name}")
+
+        # enter finding via the state index
+        state_index = self.get_node_state(node, state)
+        N.EnterFinding_bn(node, state_index)
+        if verbose:
+            print(f"setting {node_name} to {state}")
+
+    
     def get_node_belief(self, node:int|str|NeticaNode, state:int|str) -> float:
         node = self.get_node(node)
-        node_name = self.node_name(node)
-        node_state = self.get_node_state(node, state)
+        node_name = self.get_node_name(node)
+        node_state = self.get_node_state_name(node, state)
         belief = N.GetNodeBelief(node_name.encode('utf-8'), node_state.encode('utf-8'), self.net)
         return belief
+    
+    def get_node_finding(self, node:int|str|NeticaNode) -> int: #TODO: figure out what this maps to...
+        node = self.get_node(node)
+        finding = N.GetNodeFinding_bn(node)
+        return finding
     
     def cleanup_net(self):
         """run when the object is garbage collected"""
