@@ -70,8 +70,6 @@ def main():
 
     columns = ['Year', 'Country', 'Catchment', 'RR']
     for output_name in output_nodes.values():
-        # for level in levels:
-        #     columns.append(f'{output_name} ({level})')
         columns.append(f'{output_name} (Mean)')
         columns.append(f'{output_name} (Standard Deviation)')
     
@@ -95,24 +93,19 @@ def main():
         #generate the dataframe row for this subbasin
         row = [year, country, catchment, subbasin]
         for raw_name in output_nodes:
-            #do Zero, Low, Med, High
-            # for level in levels:
-            #     belief = net.get_node_belief(out, level)
-            #     row.append(belief)
             #add mean and std
             row.extend(get_stats(raw_name, net))
 
         rows.append(row)
 
+    # merge the results with the shapefile
     results = pd.DataFrame(rows, columns=columns)
     shape = pd.read_csv('shapes/limpopo_0.1degree.csv')
     shape['Year'] = year
     shape['Country'] = country
     shape['Catchment'] = catchment
     shape = shape[['Year','latitude','longitude', 'Country', 'Catchment','RR']].copy()
-
     merge_on = ['RR', 'Country', 'Year', 'Catchment']
-
     df = pd.merge(shape, results, left_on=merge_on, right_on=merge_on)
 
     #save to csv
