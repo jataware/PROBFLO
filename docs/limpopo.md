@@ -3,7 +3,7 @@
 ## Local Usage
 The Limpopo scenario requires a valid Netica license to run. Before running the `NETICA_PASSWORD` environment variable must be set to a valid license key.
 
-Set model inputs in [configs/limpopo_5_subbasin.json](../configs/limpopo.json)
+Set model inputs in [configs/limpopo.json](../configs/limpopo.json) (or [configs/limpopo_5_subbasin.json](../configs/limpopo_5_subbasin.json) for the 5 subbasin scenario):
 - All variables may be set with `null` to use the predefined destribution from the model
 - The following variables may be set with `"Zero"`, `"Low"`, `"Med"`, or `"High"` (or an integer in `[0-3]`):
     - `"WQ_ECOSYSTEM"`
