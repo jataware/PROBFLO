@@ -3,23 +3,68 @@
 ## Local Usage
 The Limpopo scenario requires a valid Netica license to run. Before running the `NETICA_PASSWORD` environment variable must be set to a valid license key.
 
-Set model inputs in [configs/limpopo.json](../configs/limpopo.json)
+Set model inputs in [configs/limpopo_5_subbasin.json](../configs/limpopo.json)
+- All variables may be set with `null` to use the predefined destribution from the model
+- The following variables may be set with `"Zero"`, `"Low"`, `"Med"`, or `"High"` (or an integer in `[0-3]`):
+    - `"WQ_ECOSYSTEM"`
+    - `"NO_BARRIERS"`
+    - `"DOM_WAT_GRO"`
+    - `"WQ_TREATMENT"`
+    - `"LANDUSE_SSUP"`
+    - `"WAT_DIS_HUM"`
+    - `"WQ_PEOPLE"`
+    - `"WQ_LIVESTOCK"`
+- The following variables may only be set with an integer in `[0-28]`:
+    - `"DISCHARGE_YR"`
+    - `"DISCHARGE_LF"`
+    - `"DISCHARGE_HF"`
+    - `"DISCHARGE_FD"`
 - see [README.md](../README.md) for more details on setting inputs
 
-Run the scenario, optionally specifying the path to the Netica file. If no path is specified, the default `neta/limpopo.neta` is used.
+Run the scenario:
 
 ```
 $ python limpopo.py
-$ python limpopo.py neta/limpopo.neta
 ```
 
 Results are output to [results/Limpopo.csv](../results/Limpopo.csv) as a CSV file.
+
+## Limpopo 5 Subbasins
+The Limpopo 5 subbasins scenario splits out the results according to 5 subbasins:
+- Crocodile Marico
+- Elephantes
+- Lower Limpopo
+- Middle Limpopo
+- Upper Limpopo
+
+It can be run with the following command:
+
+```
+python limpopo_5_subbasin.py
+```
+
+and results are output to [results/limpopo_5_subbasin.csv](../results/limpopo_5_subbasin.csv) as a CSV file. The subbasin names are specified by the "RR" column.
+
+## Limpopo 27 Subbasins
+The Limpopo 27 subbasins scenario splits out the results according to 27 subbasins:
+- TBD
+<!-- 
+It can be run with the following command:
+
+```
+python limpopo_27_subbasin.py
+```
+
+and results are output to [results/limpopo_27_subbasin.csv](../results/limpopo_27_subbasin.csv) as a CSV file. -->
+
 
 ## Gridded to Shape
 The Limpopo case study results are merged with the shape found in `shapes` which has been converted to a `csv` at the 1 and 0.1 degree cells. Currently this model uses the 0.1 degree (approx 10km at equator) cell size.
 
 ## Docker Usage
 TBD
+
+
 
 ## Netica/Python Notes
 - for Limpopo, the outputs include values of mean and standard deviation for each output node
