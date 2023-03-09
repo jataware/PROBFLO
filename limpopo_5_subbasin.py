@@ -7,9 +7,11 @@ from os.path import join
 
 import pdb
 
-column_name_map = {
-    'SUB_FISH_END': 'Maintaining fisheries for livelihoods',
+# list of nodes to record the state of at the end of the simulation
+# map from the raw name to what the node should be called in the output csv
+output_nodes = {
     'SUB_VEG_END':  'Maintain plants for livelihoods',
+    'SUB_FISH_END': 'Maintaining fisheries for livelihoods',
     'LIV_VEG_END':  'Maintain plants for domestic livestock',
     'DOM_WAT_END':  'Maintain water for domestic use',
     'FLO_ATT_END':  'Flood attenuation services',
@@ -23,9 +25,6 @@ column_name_map = {
     'TOURISM_END':  'Maintain tourism',
 }
 
-# levels = ['Zero', 'Low', 'Med', 'High']
-# input_nodes = ['DISCHARGE_YR', 'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_FD', 'WQ_ECOSYSTEM', 'NO_BARRIERS', 'DOM_WAT_GRO', 'WQ_TREATMENT', 'LANDUSE_SSUP', 'WAT_DIS_HUM', 'WQ_PEOPLE', 'WQ_LIVESTOCK']
-output_nodes = ['SUB_VEG_END', 'SUB_FISH_END', 'LIV_VEG_END', 'DOM_WAT_END', 'FLO_ATT_END', 'RIV_ASS_END', 'WAT_DIS_END', 'RES_RES_END', 'FISH_ECO_END', 'VEG_ECO_END', 'INV_ECO_END', 'REC_SPIR_END', 'TOURISM_END']
 
 # these nodes need to be retracted before they can be assigned new values
 retract_nodes = {'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_YR', 'DISCHARGE_FD'}
@@ -69,11 +68,11 @@ def main():
     year = 2022
 
     columns = ['Year', 'Country', 'Catchment', 'RR']
-    for out in output_nodes:
+    for output_name in output_nodes.values():
         # for level in levels:
-        #     columns.append(f'{column_name_map[out]} ({level})')
-        columns.append(f'{column_name_map[out]} (Mean)')
-        columns.append(f'{column_name_map[out]} (Standard Deviation)')
+        #     columns.append(f'{output_name} ({level})')
+        columns.append(f'{output_name} (Mean)')
+        columns.append(f'{output_name} (Standard Deviation)')
     
     # rows to be filled in by running the model
     rows = []
@@ -94,13 +93,13 @@ def main():
 
         #generate the dataframe row for this subbasin
         row = [year, country, catchment, subbasin]
-        for out in output_nodes:
+        for raw_name in output_nodes:
             #do Zero, Low, Med, High
             # for level in levels:
             #     belief = net.get_node_belief(out, level)
             #     row.append(belief)
             #add mean and std
-            row.extend(get_stats(out, net))
+            row.extend(get_stats(raw_name, net))
 
         rows.append(row)
 
