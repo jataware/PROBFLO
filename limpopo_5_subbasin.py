@@ -5,7 +5,6 @@ import numpy as np
 
 from os.path import join
 
-import pdb
 
 # list of nodes to record the state of at the end of the simulation
 # map from the raw name to what the node should be called in the output csv
@@ -26,7 +25,7 @@ output_nodes = {
 }
 
 
-# these nodes need to be retracted before they can be assigned new values
+# these input nodes need to be retracted before they can be assigned new values
 retract_nodes = {'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_YR', 'DISCHARGE_FD'}
 
 
@@ -38,8 +37,10 @@ def to_snake_case(name:str):
 #functions for getting the mean and standard deviation of the output nodes
 def get_stats(node:int|str|NeticaNode, net:NeticaGraph):
     """Given a histogram of beliefs (Zero, Low, Medium, High), compute mean and std-dev"""
-    #TODO: replace levels with just getting the array of state values
-    beliefs = np.array([net.get_node_belief(node, i) for i in range(net.get_num_node_states(node))]) #np.array([N.GetNodeBelief(out, level, net) for level in Val])
+    #TODO: replace beliefs array with just getting the array of state values via the API
+    #      also need to make the centers use use the correct number of states, and have the correct bounds
+    #      currently it's hardcoded for 4 states (zero, low, medium, high) -> (0, 25, 50, 75, 100)
+    beliefs = np.array([net.get_node_belief(node, i) for i in range(net.get_num_node_states(node))])
     centers = np.arange(4)*25 + 12.5
     mean = np.sum(beliefs*centers)
 
