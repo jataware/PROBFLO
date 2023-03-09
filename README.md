@@ -19,7 +19,7 @@ Set model inputs in [configs/\<scenario>.json](configs/)
     - Most variables have a distribution with 4 belief states/bins: `'Zero'`, `'Low'`, `'Med'`, `'High'`
         - e.g. in the limpopo scenario, `"WQ_ECOSYSTEM"` can be set with any of these strings, or an integer in `[0-3]`
     - Certain continuous input variables do not have named belief states, and the desired bin must be set with an integer.
-        - e.g. in the limpopo scenario, `"DISCHARGE_LF"` can be set with an integer in `[0-28]`
+        - e.g. in the limpopo scenario, `"DISCHARGE_LF"` which has 29 bins can be set with an integer in `[0-28]`
 
 
 Run the scenario, optionally specifying the path to the Netica file
