@@ -1,4 +1,4 @@
-
+from __future__ import annotations
 from NeticaPy import Netica, NewNode as NeticaNode
 from typing import Generator
 from weakref import finalize
@@ -142,7 +142,7 @@ class NeticaGraph:
         try:
             node_idx = self.node_names[node_name]
         except KeyError:
-            raise KeyError(f"node `{node_name}` does not exist in this network")
+            raise KeyError(f"node `{node_name}` does not exist in this network") from None
         return self.get_node_by_index(node_idx)
     
     def get_node(self, node:int|str|NeticaNode) -> NeticaNode:

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from netica import NeticaManager, NeticaGraph, NeticaNode
 import json
 import pandas as pd
