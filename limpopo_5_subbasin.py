@@ -86,8 +86,8 @@ def main():
         net = netica.new_graph(neta_path)
 
         # set input values from the config file for this subbasin
-        input = config[to_snake_case(subbasin)]
-        for key, value in input.items():
+        # input = config[to_snake_case(subbasin)]
+        for key, value in config.items(): #input.items():
             if value is not None:
                 net.enter_finding(key, value, retract=(key in retract_nodes), verbose=True)
 
