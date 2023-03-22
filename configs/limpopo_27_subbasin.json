@@ -1,0 +1,14 @@
+{
+    "DISCHARGE_YR": null,
+    "DISCHARGE_LF": 12,
+    "DISCHARGE_HF": 27,
+    "DISCHARGE_FD": 4,
+    "WQ_ECOSYSTEM": "High",
+    "NO_BARRIERS": null,
+    "DOM_WAT_GRO": "Zero",
+    "WQ_TREATMENT": "Low",
+    "LANDUSE_SSUP": "Med",
+    "WAT_DIS_HUM": "High",
+    "WQ_PEOPLE": null,
+    "WQ_LIVESTOCK": "Zero"
+}

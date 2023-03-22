@@ -5,6 +5,7 @@ import numpy as np
 
 from os.path import join
 
+import pdb
 
 # list of nodes to record the state of at the end of the simulation
 # map from the raw name to what the node should be called in the output csv
@@ -28,40 +29,6 @@ output_nodes = {
 # these input nodes need to be retracted before they can be assigned new values
 retract_nodes = {'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_YR', 'DISCHARGE_FD'}
 
-subbasins = [
-    '2021-11-16 BN Limpopo CROC_Update CPT_EcoEnd',
-    'Bonwapitse_Update CPT_EcoE',
-    'Bubye_Update CPT_EcoE',
-    'ELEP-Y30C-SINGU_Update CPT_EcoE',
-    'GLET-B81J-LRANC_Update CPT_EcoE',
-    'LEPH-A50H-SEEKO_Update CPT-EcoE',
-    'LETA-B83A-LONEB_Update CPT_EcoE',
-    'LIMP-A36C-LIMPK_Update CPT_EcoE',
-    'LIMP-A41D-SPANW_Update CPT_EcoE',
-    'LIMP-A71L-MAPUN_Update CPT_EcoE',
-    'LIMP-Y30D-PAFUR FIXED_Update CPT_EcoE',
-    'LIMP-Y30F-CHOKW_Update CPT_EcoE',
-    'Lotsane_Update CPT_EcoE',
-    'LUVU-A91K-OUTPO_Update CPT_EcoE',
-    'Marico_Update CPT_EcoE',
-    'MATL-A41D-WDRAAI_Update CPT_EcoE',
-    'MOGA-A36D-LIMPK_Update CPT_EcoE',
-    'Mokolo_Update CPT_EcoE',
-    'Motloutse_Update CPT-EcoE',
-    'MWEN-Y20H-MALAP_Update CPT_EcoE',
-    'Ngotwane_Update CPT_EcoE',
-    'OLIF-B73H-BALUL_Update CPT_EcoE',
-    'Olifants_Update CPT_EcoE',
-    'SAND-A71K-R508B UPDATED CPTS FOR ECO ENDP',
-    'SHAS-Y20B-TULIB_1_Update CPT_EcoE',
-    'SHIN-B90H-POACH_Update CPT_EcoE',
-    'UMZI-Y20C-BEITB_Update CPT_EcoE',
-]
-
-# subbasins = ['Upper Limpopo', 'Crocodile Marico', 'Elephantes', 'Middle Limpopo', 'Lower Limpopo']
-def to_snake_case(name:str):
-    return name.lower().replace(' ', '_')
-
 
 #functions for getting the mean and standard deviation of the output nodes
 def get_stats(node:int|str|NeticaNode, net:NeticaGraph):
@@ -84,20 +51,28 @@ def get_stats(node:int|str|NeticaNode, net:NeticaGraph):
 
 def main():
     netica = NeticaManager()
-    neta_dir = 'neta/limpopo_27_subbasin'
-    output_path = join('results', f'limpopo_5_subbasin.csv')
+    
+    # paths for this scenario
+    neta_dir = join('neta', 'limpopo_27_subbasin')
+    file_map_path = join(neta_dir, 'risk_region_mapping.csv')
+    shape_path = join('shapes', 'limpopo_27_0.1degree.csv')
+    output_path = join('results', f'limpopo_27_subbasin.csv')
+
+    # load the filename map and shapefile
+    file_map_df = pd.read_csv(file_map_path)
+    shape = pd.read_csv(shape_path)
 
     # get the model input settings from the config file
-    with open('configs/limpopo_5_subbasin.json') as f:
+    with open('configs/limpopo_27_subbasin.json') as f:
         config = json.load(f)
 
-    # create a dataframe with [Year, Country, Catchment, Level,*[*output_nodes x ['mean', 'std']]] as the columns, and one row for each subbasin
+    # create a dataframe with [Year, Country, Catchment, Level,*[*output_nodes x ['mean', 'std']]] as the columns, and one row for each site
     # constant fields for all values
     country = 'South Africa'
     catchment = 'Limpopo'
     year = 2022
 
-    columns = ['Year', 'Country', 'Catchment', 'RR']
+    columns = ['Year', 'Country', 'Catchment', 'Site Name']
     for output_name in output_nodes.values():
         columns.append(f'{output_name} (Mean)')
         columns.append(f'{output_name} (Standard Deviation)')
@@ -106,21 +81,21 @@ def main():
     rows = []
     
  
-    # run the model for each subbasin
-    for subbasin in subbasins:
-        neta_path = join(neta_dir, f'{to_snake_case(subbasin)}.neta')
+    # run the model for each site
+    for i, row in file_map_df.iterrows():
+        neta_path = join(neta_dir, row['Netica File'])
+        site = row['Site']
 
-        # load the neta graph for this subbasin
+        # load the neta graph for this site
         net = netica.new_graph(neta_path)
 
-        # set input values from the config file for this subbasin
-        input = config[to_snake_case(subbasin)]
-        for key, value in input.items():
+        # set input values from the config file for this site
+        for key, value in config.items():
             if value is not None:
                 net.enter_finding(key, value, retract=(key in retract_nodes), verbose=True)
 
-        #generate the dataframe row for this subbasin
-        row = [year, country, catchment, subbasin]
+        #generate the dataframe row for this site
+        row = [year, country, catchment, site]
         for raw_name in output_nodes:
             #add mean and std
             row.extend(get_stats(raw_name, net))
@@ -129,12 +104,11 @@ def main():
 
     # merge the results with the shapefile
     results = pd.DataFrame(rows, columns=columns)
-    shape = pd.read_csv('shapes/limpopo_0.1degree.csv')
     shape['Year'] = year
     shape['Country'] = country
     shape['Catchment'] = catchment
-    shape = shape[['Year','latitude','longitude', 'Country', 'Catchment','RR']].copy()
-    merge_on = ['RR', 'Country', 'Year', 'Catchment']
+    shape = shape[['Year','latitude','longitude', 'Country', 'Catchment','Site Name']].copy()
+    merge_on = ['Site Name', 'Country', 'Year', 'Catchment']
     df = pd.merge(shape, results, left_on=merge_on, right_on=merge_on)
 
     #save to csv
