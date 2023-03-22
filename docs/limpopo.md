@@ -45,17 +45,44 @@ python limpopo_5_subbasin.py
 
 and results are output to [results/limpopo_5_subbasin.csv](../results/limpopo_5_subbasin.csv) as a CSV file. The subbasin names are specified by the "RR" column.
 
-## Limpopo 27 Subbasins
-The Limpopo 27 subbasins scenario splits out the results according to 27 subbasins:
-- TBD
-<!-- 
+## Limpopo 27 Sites
+The Limpopo 27 sites scenario splits out the results according to 27 sites:
+- Ngotwane
+- Marico 
+- CROC-A24J-ROOIB
+- Bonwapitse 
+- MATL-A41D-WDRAAI
+- Mokolo
+- LEPH-A50H-SEEKO
+- Lotsane 
+- MOGA-A36D-LIMPK
+- Motloutse 
+- LIMP-A41D-SPANW
+- LIMP-A36C-LIMPK
+- SHAS-Y20B-TULIB
+- LIMP-A71L-MAPUN
+- UMZI-Y20C-BEITB
+- SAND-A71K-R508B
+- Bubye 
+- LUVU-A91K-OUTPO
+- MWEN-Y20H-MALAP
+- Olifants
+- OLIF-B73H-BALUL
+- GLET-B81J-LRANC
+- LETA-B83A-LONEB
+- SHIN-B90H-POACH
+- LIMP-Y30D-PAFUR
+- ELEP-Y30C-SINGU
+- LIMP-Y30F-CHOKW
+
+
 It can be run with the following command:
 
 ```
 python limpopo_27_subbasin.py
 ```
 
-and results are output to [results/limpopo_27_subbasin.csv](../results/limpopo_27_subbasin.csv) as a CSV file. -->
+and results are output to [results/limpopo_27_subbasin.csv](../results/limpopo_27_subbasin.csv) as a CSV file.
 
 
 ## Gridded to Shape
