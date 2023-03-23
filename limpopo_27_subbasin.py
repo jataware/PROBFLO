@@ -111,7 +111,7 @@ def main():
     shape = shape[['Year','latitude','longitude', 'Country', 'Catchment','Site Name']].copy()
     merge_on = ['Site Name', 'Country', 'Year', 'Catchment']
     df = pd.merge(shape, results, left_on=merge_on, right_on=merge_on)
-
+    df = df.rename(columns={'Site Name': 'RR'})
     #save to csv
     print(f'saving to {output_path}')
     df.to_csv(output_path, index=False)
