@@ -83,6 +83,8 @@ class NeticaManager:
     def __init__(self, password_varname="NETICA_PASSWORD"):
         # get the password from the environment variable
         password = os.environ.get(password_varname, default="")
+        if not password:
+            print(f"WARNING: {password_varname} environment variable for password not set. Netica will not be able to load large networks.")
         
         # create the netica environment
         self.env = N.NewNeticaEnviron_ns(password.encode('utf-8'), None, b"")
