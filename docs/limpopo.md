@@ -14,11 +14,16 @@ Set model inputs in [configs/limpopo.json](../configs/limpopo.json) (or [configs
     - `"WAT_DIS_HUM"`
     - `"WQ_PEOPLE"`
     - `"WQ_LIVESTOCK"`
-- The following variables may only be set with an integer in `[0-28]`:
+- The `"DISCHARGE_SCENARIO"` variable is a special enum that may be set with one of the following strings: `'NATURAL'`, `'PRESENT'`, `'E-FLOW'`, `'FUTURE'` (or `null` to use the model defaults).
+
+  Note that discharge scenario is a special variable that sets the following variables:
     - `"DISCHARGE_YR"`
     - `"DISCHARGE_LF"`
     - `"DISCHARGE_HF"`
     - `"DISCHARGE_FD"`
+
+  Technically if you want to manually set them you can (though it's not recommended). They may be set via the config json with an integer in the range `[0-28]`.
+
 - see [README.md](../README.md) for more details on setting inputs
 
 Run the scenario:

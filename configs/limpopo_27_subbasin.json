@@ -1,8 +1,5 @@
 {
-    "DISCHARGE_YR": null,
-    "DISCHARGE_LF": 12,
-    "DISCHARGE_HF": 27,
-    "DISCHARGE_FD": 4,
+    "DISCHARGE_SCENARIO": "NATURAL",
     "WQ_ECOSYSTEM": "High",
     "NO_BARRIERS": null,
     "DOM_WAT_GRO": "Zero",

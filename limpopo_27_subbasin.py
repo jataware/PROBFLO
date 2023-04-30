@@ -1,5 +1,6 @@
 from __future__ import annotations
 from netica import NeticaManager, NeticaGraph, NeticaNode
+from discharge_lookup import update_net_discharge_scenario
 import json
 import pandas as pd
 import numpy as np
@@ -29,6 +30,9 @@ output_nodes = {
 
 # these input nodes need to be retracted before they can be assigned new values
 retract_nodes = {'DISCHARGE_LF', 'DISCHARGE_HF', 'DISCHARGE_YR', 'DISCHARGE_FD'}
+
+# special settings
+special_settings = {'DISCHARGE_SCENARIO': update_net_discharge_scenario}
 
 
 #functions for getting the mean and standard deviation of the output nodes
@@ -92,7 +96,14 @@ def main():
 
         # set input values from the config file for this site
         for key, value in config.items():
+
+            if key in special_settings:
+                #config settings that are more complicated than just setting a node value
+                special_settings[key](site, net, value)
+                continue
+
             if value is not None:
+                # normal set node value in net
                 net.enter_finding(key, value, retract=(key in retract_nodes), verbose=True)
 
         #generate the dataframe row for this site

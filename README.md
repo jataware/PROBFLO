@@ -4,6 +4,7 @@ Python wrappers for Netica model simulations.
 ## Requirements
 - NeticaPy3: https://github.com/jataware/NeticaPy3
 - pandas
+- openpyxl
 
 ## Current Scenarios
 - [Mara](docs/mara.md)
