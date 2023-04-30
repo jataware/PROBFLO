@@ -127,7 +127,7 @@ def update_net_discharge_scenario(site:str, net:NeticaGraph, scenario:str):
     varname_map, discharge_values = get_discharge_scenario_data()
 
     assert site in varname_map, f"Site '{site}' not found in varname_map"
-    assert scenario in discharge_values, f"Value '{scenario}' not a valid discharge scenario. Expected one of {', '.join(values.keys())}"
+    assert scenario in discharge_values, f"Value '{scenario}' not a valid discharge scenario. Expected one of {', '.join(discharge_values.keys())}"
 
     for node, value in discharge_values[scenario][varname_map[site]].items():
         net.enter_finding(node, value, retract=True, verbose=True)
