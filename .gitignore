@@ -1,7 +1,8 @@
 hess
 *.csv
 
-.env
-.env.leave
+# autoenv files
+.autoenv
+.autoleave
 
 __pycache__
